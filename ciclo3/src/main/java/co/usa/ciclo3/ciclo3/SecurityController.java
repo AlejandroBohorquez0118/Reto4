@@ -25,9 +25,10 @@ public class SecurityController extends WebSecurityConfigurerAdapter {
         
             http.authorizeRequests(a->a
                 
-                .antMatchers("/","/url/**","/webjars/**","/Reservation/**",
-                        "/Client/**","/Admin/**","/Doctor/**","/Especialty/**",
-                        "/Message/**","/Score/**").permitAll()
+                .antMatchers("/","/url/**","/webjars/**"//,"/Reservation/**",
+                        //"/Client/**","/Admin/**","/Doctor/**","/Especialty/**",
+                        //"/Message/**","/Score/**"
+                ).permitAll()
                 .anyRequest().authenticated()
              
             ).exceptionHandling(e->e
