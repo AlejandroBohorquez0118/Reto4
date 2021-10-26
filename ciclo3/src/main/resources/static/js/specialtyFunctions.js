@@ -17,7 +17,7 @@ function editar(){
        
         data: dataToSend,
         
-        url: 'http://localhost:8080/api/Specialty/update',
+        url: 'http://129.151.116.109:8080/api/Specialty/update',
         
         type: 'PUT',
         contentType:'application/json',
@@ -52,7 +52,7 @@ function eliminar(idElemento){
         data : dataToSend,
         
        
-        url : "http://localhost:8080/api/Specialty/"+idElemento,
+        url : "http://129.151.116.109:8080/api/Specialty/"+idElemento,
         type: 'DELETE',
         contentType:'application/json',
         success : function(json, textStatus, xhr) {
@@ -113,7 +113,7 @@ function cargar(idItem){
         url : "http://129.151.116.109:8080/api/Specialty/"+idItem,
         type : 'GET',
         dataType : 'json',        
-
+        
         success : function(json) {               
                 console.log(json);
 
@@ -155,7 +155,7 @@ function pintarRespuesta(respuesta){
         myTable+="<tr>";
         myTable+="<td>"+respuesta[i].name+"</td>";
         myTable+="<td>"+respuesta[i].description+"</td>";
-       // myTable+="<td><button onclick='eliminar("+respuesta[i].id+")'>Borrar</button></td>";
+        myTable+="<td><button onclick='eliminar("+respuesta[i].id+")'>Borrar</button></td>";
         myTable+="<td><button onclick='cargar("+respuesta[i].id+")'>Cargar</button></td>";
         myTable+="</tr>";
     }

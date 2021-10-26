@@ -131,7 +131,7 @@ function pintarRespuesta(respuesta){
         myTable+="<td>"+respuesta[i].name+"</td>";
         myTable+="<td>"+respuesta[i].email+"</td>";
         myTable+="<td>"+respuesta[i].age+"</td>";
-       // myTable+="<td><button onclick='eliminar("+respuesta[i].idClient+")'>Borrar</button></td>";
+        myTable+="<td><button onclick='eliminar("+respuesta[i].idClient+")'>Borrar</button></td>";
         myTable+="<td><button onclick='cargar("+respuesta[i].idClient+")'>Cargar</button></td>";
         myTable+="</tr>";
     }

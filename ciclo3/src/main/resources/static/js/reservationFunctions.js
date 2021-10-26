@@ -1,17 +1,16 @@
 var idCarga; // Guarda el Id del elemento cuando se da click en el botón cargar
-
+var idCargaScore;
 
 
 function editar(){
 
     var elemento={
         idReservation: idCarga,
-        startDate:$("#startDate").val(),
-        devolutionDate:$("#devolutionDate").val(),
-        status:$("#status").val(),
-        doctor:{"id":$("#doctor").val()},
-        client:{"idClient":$("#client").val()}
-    };
+        startDate:$("#year").val()+"-"+$("#month").val()+"-"+$("#day").val(),
+        devolutionDate:$("#yearD").val()+"-"+$("#monthD").val()+"-"+$("#dayD").val(),
+
+        doctor:{"id":window.doctor},
+        client:{"idClient":window.client}    };
    
    
     var dataToSend=JSON.stringify(elemento);
@@ -37,16 +36,109 @@ function editar(){
             //alert('Petición realizada '+xhr.status);
             limpiarFormulario();
             consultar();
+            
+        }
+    });
+}
+
+function editarScore(){
+
+    //Calificar(idCargaScore)
+
+    var elemento={
+        idScore: idCargaScore,
+        score:$("#score").val(),
+            message:$("#message").val(),
+            reservation:{"idReservation":idCarga}
+    };
+   
+   
+    var dataToSend=JSON.stringify(elemento);
+    $.ajax({    
+
+        dataType : 'JSON',
+       
+        data: dataToSend,
+        
+        url: 'http://localhost:8080/api/Score/update',
+        
+        type: 'PUT',
+        contentType:'application/json',
+        
+        
+        success : function(json, textStatus, xhr) {
+         
+                console.log(json+"cambio score");
+        },
+        
+        
+        complete : function(xhr, status) {
+            //alert('Petición realizada '+xhr.status);
+            limpiarFormulario();
+            consultar();
             idCarga=null;
         }
     });
 }
 
-function eliminar(idElemento){
+
+
+function conseguirScore(idElemento){
+    
+      
+      $.ajax({    
+        url : "http://localhost:8080/api/Reservation/"+idElemento,
+        type : 'GET',
+        dataType : 'JSON',        
+
+        success : function(json) {               
+                console.log(json.score.idScore+"poronga");
+                window.idScoreE = json.score.idScore;
+                eliminarScore(window.idScoreE);
+            }
+    });}
+    function eliminar(idElemento){
+        //conseguirScore(window.idScoreE);
+
+        var elemento={
+            "id":idElemento
+          };
+          console.log("mirar id de elemento"+ idElemento);
+          
+          var dataToSend=JSON.stringify(elemento);
+        
+
+        $.ajax({    
+        
+        dataType : 'JSON',
+       
+        data : dataToSend,
+        
+        
+        url : "http://localhost:8080/api/Reservation/"+idElemento,
+        type: 'DELETE',
+        contentType:'application/json',
+        success : function(json, textStatus, xhr) {
+          
+                console.log(idElemento);
+                
+        },
+        
+        complete : function(xhr, status) {
+           //lert('Petición realizada '+xhr.status);
+            //limpiarFormulario();
+            consultar();
+        }
+    });
+}
+
+function eliminarScore(){
+    
+    
     var elemento={
-        "id":idElemento
+        "id":window.idScoreE
       };
-      console.log("mirar id de elemento"+ idElemento);
+      console.log("mirar id de elemento Score"+ window.idScoreE);
       
       var dataToSend=JSON.stringify(elemento);
     $.ajax({    
@@ -55,13 +147,12 @@ function eliminar(idElemento){
        
         data : dataToSend,
         
-       
-        url : "http://localhost:8080/api/Reservation/"+idElemento,
+        url : "http://localhost:8080/api/Score/"+window.idScoreE,
         type: 'DELETE',
         contentType:'application/json',
         success : function(json, textStatus, xhr) {
           
-                console.log(idElemento);
+                console.log(window.idScoreE+" a eliminar score");
                 
         },
         
@@ -81,15 +172,64 @@ function cargar(idItem){
         dataType : 'JSON',        
 
         success : function(json) {               
-                console.log(json);
+                console.log(json.startDate);
   
-          $("#startDate").val(json.startDate);
-          $("#devolutionDate").val(json.devolutionDate);
+                idCarga = idItem;
+                console.log("idCarga es " +idCarga);
+          
+          
+
+                let str = json.startDate;
+                
+                year = str.substring(0, 4);
+                month = str.substring(5, 7);
+                day = str.substring(8, 10);
+                console.log(year);
+                console.log(month);
+                console.log(day);
+                
+                let strD = json.devolutionDate;
+                
+                yearD = strD.substring(0, 4);
+                monthD = strD.substring(5, 7);
+                dayD = strD.substring(8, 10);
+
+          
+            $("#year").val(year);
+            $("#month").val(month);
+            $("#day").val(day);
+
+            $("#yearD").val(yearD);
+            $("#monthD").val(monthD);
+            $("#dayD").val(dayD);
+          
           $("#status").val(json.status);
           $("#doctor").val(json.doctor.id);
           $("#client").val(json.client.idClient);
+          
+  
+        }
+    });
+}
+
+function cargarScore(idItem){
+    $.ajax({    
+        url : "http://localhost:8080/api/Reservation/"+idItem,
+        type : 'GET',
+        dataType : 'JSON',        
+
+        success : function(json) {               
+                console.log(json);
+  
+          $("#score").val(json.score.score);
+          $("#message").val(json.score.message);
           idCarga = idItem;
-          console.log("idCarga es " +idCarga);
+          idCargaScore = json.score.idScore;
+          console.log("idCarga es " +idCargaScore);
+          var scoreInput = document.getElementById('score');
+          var messageInput = document.getElementById('message');
+            scoreInput.readOnly=false;
+            messageInput.readOnly=false;
   
         }
     });
@@ -100,11 +240,12 @@ function cargar(idItem){
 
 function consultar(){
     $.ajax({
-        url:"http://129.151.116.109:8080/api/Reservation/all",
+        url:"http://localhost:8080/api/Reservation/all",
         type:"GET",
         datatype:"JSON",
         success:function(respuesta){
             console.log(respuesta);
+            window.respuesta=respuesta;
             pintarRespuesta(respuesta);
         }
     });
@@ -122,6 +263,11 @@ function pintarRespuesta(respuesta){
     myTable+="<th>"+"Nombre Cliente"+"</th>";
     myTable+="<th>"+"Email Cliente"+"</th>";
     myTable+="<th>"+"Score"+"</th>";
+    myTable+="<th>"+"Borrar Mensaje"+"</th>";
+    myTable+="<th>"+"Calificar"+"</th>";
+    myTable+="<th>"+"Editar Mensaje"+"</th>";
+    myTable+="<th>"+"Eliminar Score"+"</th>";
+    myTable+="<th>"+"Editar Score"+"</th>";
     myTable+="</TR>";
     myTable+="</thead>";
 
@@ -143,9 +289,16 @@ function pintarRespuesta(respuesta){
             myTable+="<td>"+"Sin calificacion"+"</td>";
        }
        
-        //myTable+="<td><button onclick='eliminar("+respuesta[i].idReservation+")'>Borrar</button></td>";
+        myTable+="<td><button onclick='eliminar("+respuesta[i].idReservation+")'>Borrar Mensaje</button></td>";
 
         myTable+="<td><button onclick='Calificar("+respuesta[i].idReservation+")'>Calificar</button></td>";
+        
+        myTable+="<td><button onclick='cargar("+respuesta[i].idReservation+")'>Cargar Mensaje</button></td>";
+        
+        myTable+="<td><button onclick='conseguirScore("+respuesta[i].idReservation+")'>Borrar Calificacion</button></td>";
+
+        myTable+="<td><button onclick='cargarScore("+respuesta[i].idReservation+")'>cargar Calificacion</button></td>";
+
         myTable+="</tr>";
     }
     myTable+="</table>";
@@ -166,7 +319,7 @@ function guardar(){
         contentType:"application/json; charset=utf-8",
         dataType: 'JSON',
         data: JSON.stringify(var2),
-        url:"http://129.151.116.109:8080/api/Reservation/save",
+        url:"http://localhost:8080/api/Reservation/save",
         success:function(respose) {
             console.log("Se guardó correctamente");
             //alert("Se guardó correctametne..");
@@ -207,7 +360,7 @@ function consultarDatos(){
 
  function consultarDoctor(){
     $.ajax({
-        url:"http://129.151.116.109:8080/api/Doctor/all",
+        url:"http://localhost:8080/api/Doctor/all",
         type:"GET",
         datatype:"JSON",
         success:function(respuesta){
@@ -238,7 +391,7 @@ function consultarDatos(){
 
 function consultarCliente(){
     $.ajax({
-        url:"http://129.151.116.109:8080/api/Client/all",
+        url:"http://localhost:8080/api/Client/all",
         type:"GET",
         datatype:"JSON",
         success:function(respuesta){
@@ -270,7 +423,7 @@ function consultarCliente(){
 
      function Calificar(idItem){
         $.ajax({    
-            url : "http://129.151.116.109:8080/api/Reservation/"+idItem,
+            url : "http://localhost:8080/api/Reservation/"+idItem,
             type : 'GET',
             dataType : 'JSON',        
     
@@ -308,7 +461,7 @@ function consultarCliente(){
             contentType:"application/json; charset=utf-8",
             dataType: 'JSON',
             data: JSON.stringify(var2),
-            url:"http://129.151.116.109:8080/api/Score/save",
+            url:"http://localhost:8080/api/Score/save",
             success:function(respose) {
                 console.log("Se guardó correctamente");
                 var scoreInput = document.getElementById('score');
