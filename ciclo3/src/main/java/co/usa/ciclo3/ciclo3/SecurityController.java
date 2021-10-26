@@ -23,11 +23,24 @@ public class SecurityController extends WebSecurityConfigurerAdapter {
     @Override
         protected void configure(HttpSecurity http)throws Exception{
         
-            http.authorizeRequests(a->a
+        /*
+            http.antMatcher("/**").authorizeRequests()
+                    .antMatchers(new String[]{"/","/sin-restriccion"}).permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .cauth2Login;
+                    http.cors().and().csrf().disable();
+            
+            
+         */   
+            
+            
+            
+           http.authorizeRequests(a->a
                 
-                .antMatchers("/","/url/**","/webjars/**"//,"/Reservation/**",
-                        //"/Client/**","/Admin/**","/Doctor/**","/Especialty/**",
-                        //"/Message/**","/Score/**"
+                .antMatchers("/**","/url/**","/webjars/**","/Reservation/**",
+                        "/Client/**","/Doctor","/Especialty/**",
+                        "/Message/**","/Score/**"
                 ).permitAll()
                 .anyRequest().authenticated()
              
@@ -37,6 +50,8 @@ public class SecurityController extends WebSecurityConfigurerAdapter {
                     
             ).oauth2Login();
             http.cors().and().csrf().disable();
+        
+        
         }
     
     
