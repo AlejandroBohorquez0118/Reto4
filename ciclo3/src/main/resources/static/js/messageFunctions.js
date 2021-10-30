@@ -7,8 +7,8 @@ function editar(){
     var elemento={
         idMessage:idCarga,
         messageText:$("#messageText").val(),
-        doctor:{"id":$("#doctor").val()},
-        client:{"idClient":$("#client").val()}
+        doctor:{"id":window.doctor},
+        client:{"idClient":window.client}
     };
     
     var dataToSend=JSON.stringify(elemento);
