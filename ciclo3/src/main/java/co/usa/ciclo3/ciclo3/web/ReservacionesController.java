@@ -6,6 +6,8 @@
 package co.usa.ciclo3.ciclo3.web;
 
 import co.usa.ciclo3.ciclo3.Modelo.Reservaciones;
+import co.usa.ciclo3.ciclo3.Modelo.StatusReport;
+import co.usa.ciclo3.ciclo3.Reportes.ContadorClientes;
 import co.usa.ciclo3.ciclo3.Service.ReservacionesService;
 import java.util.List;
 import java.util.Optional;
@@ -74,4 +76,23 @@ public class ReservacionesController {
         return reservacionesService.delete(id);
     }
 
+    @GetMapping("/report-dates/{dateOne}/{dateTwo}")
+    public List<Reservaciones>getReservationDatePeriod(@PathVariable("dateOne")String dateOne,@PathVariable("dateTwo")String dateTwo){
+    
+        return reservacionesService.getReservaPeriodo(dateOne, dateTwo);
+        
+    }
+    
+    @GetMapping("/report-clients")
+    public List<ContadorClientes> getReservationsReportsClients(){
+    
+        return reservacionesService.getTopClients();
+        
+    }
+    
+    @GetMapping("/report-status")
+    public StatusReport getStatusReport() {
+        return reservacionesService.getStatusReport();
+    }
+    
 }

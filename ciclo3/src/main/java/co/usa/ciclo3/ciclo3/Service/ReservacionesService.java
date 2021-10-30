@@ -6,7 +6,13 @@
 package co.usa.ciclo3.ciclo3.Service;
 
 import co.usa.ciclo3.ciclo3.Modelo.Reservaciones;
+import co.usa.ciclo3.ciclo3.Modelo.StatusReport;
+import co.usa.ciclo3.ciclo3.Reportes.ContadorClientes;
 import co.usa.ciclo3.ciclo3.Repository.crud.ReservacionesRepository;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,4 +101,46 @@ public class ReservacionesService {
         return false;
 
     }
-}
+
+    public List<Reservaciones>getReservaPeriodo(String dateA, String dateB){
+    
+    SimpleDateFormat parser= new SimpleDateFormat("yyyy-MM-dd");
+    Date aDate= new Date();
+    Date bDate= new Date();
+    
+    try {
+    
+        aDate= parser.parse(dateA);
+        bDate= parser.parse(dateB);
+                
+    } 
+    catch(ParseException event){
+    
+        event.printStackTrace();
+    
+    }
+    
+    if(aDate.before(bDate)){
+        
+        return reservacionesRepository.getReservaPerdiodo(aDate, bDate);
+        
+    }else{
+    
+    return new ArrayList<>();
+    
+    }
+    }
+    
+    public List<ContadorClientes> getTopClients(){
+    
+    return reservacionesRepository.getTopClients();
+    
+    }
+    
+    public StatusReport getStatusReport() {
+        List<Reservaciones> completed = reservacionesRepository.getReservacionesByStatus("completed");
+        List<Reservaciones> cancelled = reservacionesRepository.getReservacionesByStatus("cancelled");
+        StatusReport s = new StatusReport(completed.size(), cancelled.size());
+        return s;
+    }
+    }
